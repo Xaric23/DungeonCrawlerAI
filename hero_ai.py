@@ -8,7 +8,7 @@ from behavior_tree import (
     BehaviorTree, NodeStatus, SequenceNode, SelectorNode,
     ConditionNode, ActionNode, BehaviorNode
 )
-from models import Hero, Room, Enemy, Item, ItemType
+from models import Hero, Room, Enemy, Item, ItemType, ItemQuality
 from dungeon import Dungeon
 from events import EventBus, Event, EventType
 
@@ -305,6 +305,3 @@ class HeroAI:
     def _on_room_altered(self, event: Event):
         """Track room alterations"""
         pass  # Handled in move logic
-
-
-from models import ItemQuality
