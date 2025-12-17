@@ -6,9 +6,10 @@ A [Probot](https://probot.github.io) app to automate DungeonCrawlerAI repository
 
 - 🏷️ **Auto-labeling** - Labels issues/PRs based on content
 - 👋 **Welcome messages** - Greets first-time contributors
-- ⏰ **Stale management** - Marks and closes inactive issues
 - 💝 **Reactions** - Reacts to thank-you comments
 - 📝 **Release notes** - Enhances release descriptions
+
+**Note:** For stale issue management, use GitHub Actions with the `actions/stale` action instead of implementing it in Probot.
 
 ## Setup
 
@@ -80,11 +81,25 @@ git push heroku main
 ### Docker
 
 ```dockerfile
+# Build the DungeonCrawler Bot image
 FROM node:18-alpine
+
 WORKDIR /app
+
+# Install production dependencies
 COPY package*.json ./
 RUN npm ci --only=production
+
+# Copy app source
 COPY . .
+
+# Environment variables such as APP_ID, PRIVATE_KEY, and WEBHOOK_SECRET
+# must be provided at runtime, for example:
+#   docker run --env-file .env -p 3000:3000 dungeoncrawler-bot
+
+# Probot listens on port 3000 by default
+EXPOSE 3000
+
 CMD ["npm", "start"]
 ```
 
