@@ -11,6 +11,19 @@ from hero_ai import HeroAI
 from player_curse import PlayerCurse
 from behavior_tree import NodeStatus
 
+# Try to load mods at module import time
+try:
+    from mod_loader import load_mods
+    _mods_loaded = False
+    def _ensure_mods_loaded():
+        global _mods_loaded
+        if not _mods_loaded:
+            load_mods(verbose=False)
+            _mods_loaded = True
+except ImportError:
+    def _ensure_mods_loaded():
+        pass
+
 
 class GameState:
     """Tracks the current state of the game"""
@@ -25,7 +38,7 @@ class GameState:
 class DungeonCrawlerGame:
     """Main game controller"""
     
-    def __init__(self, num_rooms: int = 10, enable_player: bool = True, auto_player: bool = False):
+    def __init__(self, num_rooms: int = 10, enable_player: bool = True, auto_player: bool = False, use_mods: bool = True):
         """
         Initialize the game.
         
@@ -33,15 +46,21 @@ class DungeonCrawlerGame:
             num_rooms: Number of rooms in the dungeon
             enable_player: Whether to enable player curse actions
             auto_player: Whether player actions are automated (for simulation)
+            use_mods: Whether to load and use mod content
         """
+        # Load mods if enabled
+        if use_mods:
+            _ensure_mods_loaded()
+        
         self.event_bus = EventBus()
-        self.dungeon = Dungeon(num_rooms)
+        self.dungeon = Dungeon(num_rooms, use_mods=use_mods)
         self.hero = Hero("Brave Adventurer")
         self.hero_ai = HeroAI(self.hero, self.dungeon, self.event_bus)
         self.player_curse = PlayerCurse(self.dungeon, self.event_bus) if enable_player else None
         self.state = GameState()
         self.enable_player = enable_player
         self.auto_player = auto_player
+        self.use_mods = use_mods
         self.max_turns = 200  # Prevent infinite loops
         
         # Subscribe to important events

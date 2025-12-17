@@ -1,0 +1,91 @@
+{
+  "name": "Example Mod",
+  "version": "1.0.0",
+  "author": "DungeonCrawlerAI Team",
+  "description": "An example mod demonstrating custom enemies, items, traps, and curse powers",
+  "enemies": [
+    {
+      "id": "vampire",
+      "name": "Vampire",
+      "type": "vampire",
+      "health": 70,
+      "attack": 18,
+      "defense": 6,
+      "description": "A bloodsucking creature of the night"
+    },
+    {
+      "id": "golem",
+      "name": "Stone Golem",
+      "type": "golem",
+      "health": 120,
+      "attack": 15,
+      "defense": 15,
+      "description": "An animated stone construct with high defense"
+    },
+    {
+      "id": "shadow",
+      "name": "Shadow Stalker",
+      "type": "shadow",
+      "health": 40,
+      "attack": 25,
+      "defense": 2,
+      "description": "A fast, deadly shadow creature with low defense"
+    }
+  ],
+  "items": [
+    {
+      "id": "legendary_sword",
+      "name": "Legendary Sword",
+      "type": "weapon",
+      "value": 30,
+      "description": "A powerful ancient sword"
+    },
+    {
+      "id": "super_potion",
+      "name": "Super Health Potion",
+      "type": "health_potion",
+      "value": 75,
+      "description": "Restores a large amount of health"
+    },
+    {
+      "id": "dragon_scales",
+      "name": "Dragon Scale Armor",
+      "type": "armor",
+      "value": 15,
+      "description": "Armor made from dragon scales"
+    },
+    {
+      "id": "ancient_relic",
+      "name": "Ancient Relic",
+      "type": "treasure",
+      "value": 500,
+      "description": "A priceless ancient artifact"
+    }
+  ],
+  "traps": [
+    {
+      "id": "lightning",
+      "name": "Lightning Trap",
+      "type": "lightning",
+      "damage": 35,
+      "description": "Electrocutes anyone who triggers it"
+    },
+    {
+      "id": "ice",
+      "name": "Ice Trap",
+      "type": "ice",
+      "damage": 20,
+      "description": "Freezes and damages the victim"
+    }
+  ],
+  "curse_powers": [
+    {
+      "id": "summon_minion",
+      "name": "Summon Minion",
+      "cost": 40,
+      "suspicion": 25,
+      "description": "Summon a weak enemy to fight the hero",
+      "effect": "spawn_enemy"
+    }
+  ]
+}
