@@ -3,12 +3,8 @@
 Tests for the modding system.
 """
 import unittest
-import os
-import json
-import tempfile
-import shutil
 from pathlib import Path
-from mod_loader import ModLoader, ModRegistry, get_mod_registry, load_mods
+from mod_loader import ModLoader, ModRegistry
 from dungeon import create_custom_enemy, create_custom_item, create_custom_trap, Dungeon
 from game import DungeonCrawlerGame
 
