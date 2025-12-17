@@ -6,9 +6,10 @@ A [Probot](https://probot.github.io) app to automate DungeonCrawlerAI repository
 
 - 🏷️ **Auto-labeling** - Labels issues/PRs based on content
 - 👋 **Welcome messages** - Greets first-time contributors
-- ⏰ **Stale management** - Marks and closes inactive issues
 - 💝 **Reactions** - Reacts to thank-you comments
 - 📝 **Release notes** - Enhances release descriptions
+
+**Note:** For stale issue management, use GitHub Actions with the `actions/stale` action instead of implementing it in Probot.
 
 ## Setup
 

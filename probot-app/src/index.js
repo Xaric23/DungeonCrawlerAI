@@ -3,11 +3,6 @@
  * Automates repository workflows and community management
  */
 
-// Configuration constants
-const STALE_ISSUE_DAYS = 30; // Days until an issue is marked as stale
-const STALE_CLOSE_DAYS = 7; // Days after stale label before closing
-const STALE_LABEL = "stale";
-
 /**
  * @param {import('probot').Probot} app
  */
@@ -135,85 +130,40 @@ A maintainer will review this soon. Thanks for helping make the dungeon more dan
   // ============ STALE ISSUE MANAGEMENT ============
 
   /**
-   * Note: This handler checks stale issues on issue activity.
-   * For scheduled checks, use GitHub Actions with a cron schedule that
-   * triggers a repository_dispatch event or use the probot-scheduler plugin.
+   * Note: Stale issue management requires scheduled execution which is not
+   * natively supported by Probot's event system.
+   * 
+   * To implement stale issue management, you have two options:
+   * 
+   * 1. Use GitHub Actions with a cron schedule:
+   *    - Create a workflow that runs on a schedule (e.g., daily)
+   *    - Trigger a repository_dispatch event
+   *    - Handle the event here with app.on("repository_dispatch")
+   * 
+   * 2. Use the probot-scheduler plugin:
+   *    - Install: npm install probot-scheduler
+   *    - Configure in this file to run periodic checks
+   * 
+   * Example GitHub Actions workflow (.github/workflows/stale-check.yml):
+   * 
+   * ```yaml
+   * name: Check Stale Issues
+   * on:
+   *   schedule:
+   *     - cron: '0 0 * * *'  # Run daily at midnight
+   * jobs:
+   *   check-stale:
+   *     runs-on: ubuntu-latest
+   *     steps:
+   *       - uses: actions/stale@v8
+   *         with:
+   *           days-before-stale: 30
+   *           days-before-close: 7
+   *           stale-issue-label: 'stale'
+   *           stale-issue-message: 'This issue has been marked as stale'
+   *           close-issue-message: 'This issue has been closed due to inactivity'
+   * ```
    */
-  app.on("issues", async (context) => {
-    // Fetch all open issues with pagination
-    const allIssues = [];
-    let page = 1;
-
-    while (true) {
-      const { data: issuesPage } = await context.octokit.issues.listForRepo({
-        ...context.repo(),
-        state: "open",
-        per_page: 100,
-        page,
-      });
-
-      allIssues.push(...issuesPage);
-
-      if (issuesPage.length < 100) {
-        break;
-      }
-
-      page += 1;
-    }
-
-    const now = new Date();
-
-    for (const issue of allIssues) {
-      try {
-        const updatedAt = new Date(issue.updated_at);
-        const daysSinceUpdate = (now - updatedAt) / (1000 * 60 * 60 * 24);
-
-        const isStale = issue.labels.some((l) => l.name === STALE_LABEL);
-
-        if (daysSinceUpdate > STALE_ISSUE_DAYS && !isStale) {
-          // Mark as stale
-          await context.octokit.issues.addLabels({
-            ...context.repo(),
-            issue_number: issue.number,
-            labels: [STALE_LABEL],
-          });
-
-          await context.octokit.issues.createComment({
-            ...context.repo(),
-            issue_number: issue.number,
-            body: `⏰ This issue has been automatically marked as stale because it has not had activity in ${STALE_ISSUE_DAYS} days.
-
-It will be closed in ${STALE_CLOSE_DAYS} days if no further activity occurs. If this issue is still relevant, please comment or update it.`,
-          });
-
-          // Add delay to avoid rate limiting
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } else if (isStale && daysSinceUpdate > STALE_ISSUE_DAYS + STALE_CLOSE_DAYS) {
-          // Close stale issue
-          await context.octokit.issues.update({
-            ...context.repo(),
-            issue_number: issue.number,
-            state: "closed",
-          });
-
-          await context.octokit.issues.createComment({
-            ...context.repo(),
-            issue_number: issue.number,
-            body: "🔒 This issue has been closed due to inactivity. Feel free to reopen if it's still relevant!",
-          });
-
-          // Add delay to avoid rate limiting
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      } catch (error) {
-        context.log.error(
-          { err: error, issueNumber: issue.number },
-          "Failed to process stale issue"
-        );
-        // Continue processing other issues even if one fails
-      }
-    }
-  });
 
   // ============ COMMENT REACTIONS ============
 

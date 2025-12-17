@@ -41,7 +41,7 @@ describe("DungeonCrawler Bot", () => {
         })
         .reply(200, []);
 
-      await probot.receive({ name: "issues", payload: issueOpenedPayload });
+      await probot.receive({ name: "issues.opened", payload: issueOpenedPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
     });
 
@@ -66,7 +66,7 @@ describe("DungeonCrawler Bot", () => {
         })
         .reply(200, []);
 
-      await probot.receive({ name: "issues", payload: enhancementPayload });
+      await probot.receive({ name: "issues.opened", payload: enhancementPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
     });
 
@@ -91,7 +91,7 @@ describe("DungeonCrawler Bot", () => {
         })
         .reply(200, []);
 
-      await probot.receive({ name: "issues", payload: docPayload });
+      await probot.receive({ name: "issues.opened", payload: docPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
     });
   });
@@ -112,7 +112,7 @@ describe("DungeonCrawler Bot", () => {
         })
         .reply(200, {});
 
-      await probot.receive({ name: "issues", payload: issueOpenedPayload });
+      await probot.receive({ name: "issues.opened", payload: issueOpenedPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
     });
 
@@ -125,7 +125,7 @@ describe("DungeonCrawler Bot", () => {
         .post("/repos/Xaric23/DungeonCrawlerAI/issues/1/labels")
         .reply(200, []);
 
-      await probot.receive({ name: "issues", payload: issueOpenedPayload });
+      await probot.receive({ name: "issues.opened", payload: issueOpenedPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
     });
 
@@ -145,7 +145,7 @@ describe("DungeonCrawler Bot", () => {
         .reply(200, {});
 
       await probot.receive({
-        name: "pull_request",
+        name: "pull_request.opened",
         payload: pullRequestOpenedPayload,
       });
       expect(mock.pendingMocks()).toStrictEqual([]);
@@ -173,7 +173,7 @@ describe("DungeonCrawler Bot", () => {
         .get("/repos/Xaric23/DungeonCrawlerAI/issues?creator=testuser&state=all")
         .reply(200, [{ ...bugFixPayload.pull_request, pull_request: {} }]);
 
-      await probot.receive({ name: "pull_request", payload: bugFixPayload });
+      await probot.receive({ name: "pull_request.opened", payload: bugFixPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
     });
 
@@ -197,7 +197,7 @@ describe("DungeonCrawler Bot", () => {
         .get("/repos/Xaric23/DungeonCrawlerAI/issues?creator=testuser&state=all")
         .reply(200, [{ ...enhancementPayload.pull_request, pull_request: {} }]);
 
-      await probot.receive({ name: "pull_request", payload: enhancementPayload });
+      await probot.receive({ name: "pull_request.opened", payload: enhancementPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
     });
   });
