@@ -1,2 +1,11 @@
 # DungeonCrawlerAI Requirements
-# No external dependencies required - using only Python standard library
+
+# Core game - No external dependencies required (uses only Python standard library)
+
+# Optional dependencies for enhanced features:
+
+# Web Dashboard (optional)
+flask>=2.0.0
+
+# For better terminal colors (optional)
+# colorama>=0.4.0
