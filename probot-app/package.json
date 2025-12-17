@@ -1,0 +1,28 @@
+{
+  "name": "dungeoncrawler-bot",
+  "version": "1.0.0",
+  "description": "A Probot app for DungeonCrawlerAI repository automation",
+  "author": "Xaric23",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Xaric23/DungeonCrawlerAI.git"
+  },
+  "scripts": {
+    "start": "probot run ./src/index.js",
+    "dev": "nodemon --exec 'npm start'",
+    "test": "jest"
+  },
+  "dependencies": {
+    "probot": "^13.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "nodemon": "^3.0.0",
+    "nock": "^13.0.0",
+    "smee-client": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
