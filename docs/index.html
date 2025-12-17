@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DungeonCrawlerAI - Reverse Dungeon Crawler</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <h1>🏰 DungeonCrawlerAI</h1>
+            <p class="subtitle">The hero is AI-controlled. You are the dungeon's curse!</p>
+        </header>
+
+        <!-- Game Setup -->
+        <div id="setup-screen" class="screen">
+            <div class="setup-panel">
+                <h2>⚙️ Game Setup</h2>
+                
+                <div class="setup-group">
+                    <label>Difficulty:</label>
+                    <select id="difficulty-select">
+                        <option value="easy">Easy - Hero is stronger</option>
+                        <option value="normal" selected>Normal - Balanced</option>
+                        <option value="hard">Hard - You are stronger</option>
+                        <option value="nightmare">Nightmare - Ultimate challenge</option>
+                    </select>
+                </div>
+
+                <div class="setup-group">
+                    <label>Hero Class:</label>
+                    <select id="archetype-select">
+                        <option value="warrior">Warrior - High HP & Defense</option>
+                        <option value="rogue">Rogue - High Attack, Low Defense</option>
+                        <option value="paladin">Paladin - Balanced with Healing</option>
+                        <option value="mage">Mage - Glass Cannon</option>
+                        <option value="berserker">Berserker - Risk/Reward</option>
+                        <option value="ranger">Ranger - Trap Detection</option>
+                    </select>
+                </div>
+
+                <div class="setup-group">
+                    <label>Dungeon Theme:</label>
+                    <select id="theme-select">
+                        <option value="fantasy">Classic Fantasy</option>
+                        <option value="undead">Undead Crypt</option>
+                        <option value="tech">Technological</option>
+                        <option value="volcanic">Volcanic</option>
+                        <option value="ice">Ice Cavern</option>
+                        <option value="eldritch">Eldritch Horror</option>
+                    </select>
+                </div>
+
+                <div class="setup-group">
+                    <label>Dungeon Size:</label>
+                    <select id="rooms-select">
+                        <option value="6">Small (6 rooms)</option>
+                        <option value="10" selected>Medium (10 rooms)</option>
+                        <option value="15">Large (15 rooms)</option>
+                    </select>
+                </div>
+
+                <button id="start-btn" class="btn btn-primary">⚔️ Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="turn-counter">Turn: <span id="turn-num">0</span></div>
+                <div class="game-mode">
+                    <button id="pause-btn" class="btn btn-small">⏸️ Pause</button>
+                    <button id="speed-btn" class="btn btn-small">🐇 Fast</button>
+                </div>
+            </div>
+
+            <!-- Main Game Area -->
+            <div class="game-area">
+                <!-- Left Panel: Map -->
+                <div class="map-panel">
+                    <h3>🗺️ Dungeon Map</h3>
+                    <div id="dungeon-map" class="dungeon-map"></div>
+                    <div class="map-legend">
+                        <span class="legend-item"><span class="legend-icon entrance">E</span> Entrance</span>
+                        <span class="legend-item"><span class="legend-icon normal">N</span> Normal</span>
+                        <span class="legend-item"><span class="legend-icon treasure">T</span> Treasure</span>
+                        <span class="legend-item"><span class="legend-icon boss">B</span> Boss</span>
+                        <span class="legend-item"><span class="legend-icon hero">@</span> Hero</span>
+                    </div>
+                </div>
+
+                <!-- Center Panel: Status -->
+                <div class="status-panel">
+                    <!-- Hero Status -->
+                    <div class="status-box hero-status">
+                        <h3>🦸 Hero Status</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Health:</span>
+                            <div class="progress-bar">
+                                <div id="hero-health-bar" class="progress-fill health"></div>
+                            </div>
+                            <span id="hero-health-text" class="stat-value">100/100</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Attack:</span>
+                            <span id="hero-attack" class="stat-value">15</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Defense:</span>
+                            <span id="hero-defense" class="stat-value">5</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Gold:</span>
+                            <span id="hero-gold" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Suspicion:</span>
+                            <div class="progress-bar">
+                                <div id="hero-suspicion-bar" class="progress-fill suspicion"></div>
+                            </div>
+                            <span id="hero-suspicion-text" class="stat-value">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Curse Status -->
+                    <div class="status-box curse-status">
+                        <h3>😈 Curse Energy</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Energy:</span>
+                            <div class="progress-bar">
+                                <div id="curse-energy-bar" class="progress-fill energy"></div>
+                            </div>
+                            <span id="curse-energy-text" class="stat-value">100/100</span>
+                        </div>
+                        <div id="actions-taken" class="stat-row">
+                            Actions: <span id="curse-actions">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Current Room -->
+                    <div class="status-box room-status">
+                        <h3>📍 Current Room</h3>
+                        <div id="room-info">
+                            <p>Room: <span id="room-id">0</span> (<span id="room-type">Entrance</span>)</p>
+                            <p>Enemies: <span id="room-enemies">0</span></p>
+                            <p>Items: <span id="room-items">0</span></p>
+                            <p>Traps: <span id="room-traps">0</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Actions -->
+                <div class="actions-panel">
+                    <h3>🔮 Curse Powers</h3>
+                    <div id="curse-powers" class="powers-list">
+                        <button class="power-btn" data-power="trigger_trap" data-cost="5">
+                            <span class="power-name">⚡ Trigger Trap</span>
+                            <span class="power-cost">5 energy</span>
+                        </button>
+                        <button class="power-btn" data-power="alter_room" data-cost="20">
+                            <span class="power-name">🏚️ Alter Room</span>
+                            <span class="power-cost">20 energy</span>
+                        </button>
+                        <button class="power-btn" data-power="corrupt_loot" data-cost="15">
+                            <span class="power-name">💀 Corrupt Loot</span>
+                            <span class="power-cost">15 energy</span>
+                        </button>
+                        <button class="power-btn" data-power="mutate_enemy" data-cost="25">
+                            <span class="power-name">👹 Mutate Enemy</span>
+                            <span class="power-cost">25 energy</span>
+                        </button>
+                        <button class="power-btn" data-power="spawn_trap" data-cost="15">
+                            <span class="power-name">🪤 Spawn Trap</span>
+                            <span class="power-cost">15 energy</span>
+                        </button>
+                        <hr>
+                        <button class="power-btn advanced" data-power="teleport" data-cost="35">
+                            <span class="power-name">🌀 Teleport Hero</span>
+                            <span class="power-cost">35 energy</span>
+                        </button>
+                        <button class="power-btn advanced" data-power="summon" data-cost="30">
+                            <span class="power-name">👻 Summon Enemy</span>
+                            <span class="power-cost">30 energy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Log -->
+            <div class="event-log-panel">
+                <h3>📜 Event Log</h3>
+                <div id="event-log" class="event-log"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen hidden">
+            <div class="gameover-panel">
+                <h2 id="gameover-title">Game Over</h2>
+                <div id="gameover-message"></div>
+                <div class="gameover-stats">
+                    <p>Turns: <span id="final-turns">0</span></p>
+                    <p>Hero Health: <span id="final-health">0</span></p>
+                    <p>Suspicion: <span id="final-suspicion">0%</span></p>
+                    <p>Your Actions: <span id="final-actions">0</span></p>
+                    <p>Gold Collected: <span id="final-gold">0</span></p>
+                </div>
+                <button id="restart-btn" class="btn btn-primary">🔄 Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
