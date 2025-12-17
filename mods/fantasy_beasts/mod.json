@@ -1,0 +1,67 @@
+{
+  "name": "Fantasy Beasts Pack",
+  "version": "1.0.0",
+  "author": "Community",
+  "description": "Adds mythical creatures and magical items to the dungeon",
+  "enemies": [
+    {
+      "id": "griffin",
+      "name": "Griffin",
+      "type": "beast",
+      "health": 85,
+      "attack": 22,
+      "defense": 8,
+      "description": "A majestic creature with the body of a lion and wings of an eagle"
+    },
+    {
+      "id": "basilisk",
+      "name": "Basilisk",
+      "type": "serpent",
+      "health": 60,
+      "attack": 28,
+      "defense": 4,
+      "description": "A deadly serpent whose gaze can turn victims to stone"
+    },
+    {
+      "id": "minotaur",
+      "name": "Minotaur",
+      "type": "beast",
+      "health": 100,
+      "attack": 20,
+      "defense": 12,
+      "description": "A powerful bull-headed warrior"
+    }
+  ],
+  "items": [
+    {
+      "id": "phoenix_feather",
+      "name": "Phoenix Feather",
+      "type": "health_potion",
+      "value": 100,
+      "description": "A feather that grants complete healing"
+    },
+    {
+      "id": "unicorn_horn",
+      "name": "Unicorn Horn Spear",
+      "type": "weapon",
+      "value": 20,
+      "description": "A spear made from a sacred unicorn horn"
+    },
+    {
+      "id": "dragon_heart",
+      "name": "Dragon Heart Amulet",
+      "type": "treasure",
+      "value": 300,
+      "description": "A rare and valuable dragon heart preserved in amber"
+    }
+  ],
+  "traps": [
+    {
+      "id": "petrification",
+      "name": "Petrification Trap",
+      "type": "magic",
+      "damage": 30,
+      "description": "Magical energy that partially petrifies the victim"
+    }
+  ]
+}
