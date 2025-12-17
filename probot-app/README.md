@@ -80,11 +80,25 @@ git push heroku main
 ### Docker
 
 ```dockerfile
+# Build the DungeonCrawler Bot image
 FROM node:18-alpine
+
 WORKDIR /app
+
+# Install production dependencies
 COPY package*.json ./
 RUN npm ci --only=production
+
+# Copy app source
 COPY . .
+
+# Environment variables such as APP_ID, PRIVATE_KEY, and WEBHOOK_SECRET
+# must be provided at runtime, for example:
+#   docker run --env-file .env -p 3000:3000 dungeoncrawler-bot
+
+# Probot listens on port 3000 by default
+EXPOSE 3000
+
 CMD ["npm", "start"]
 ```
 

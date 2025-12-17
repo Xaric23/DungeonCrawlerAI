@@ -1,0 +1,22 @@
+{
+  "action": "opened",
+  "issue": {
+    "number": 1,
+    "title": "Found a bug in the game",
+    "body": "There is an error when starting the game",
+    "user": {
+      "login": "testuser"
+    },
+    "labels": [],
+    "updated_at": "2023-01-01T00:00:00Z"
+  },
+  "repository": {
+    "name": "DungeonCrawlerAI",
+    "owner": {
+      "login": "Xaric23"
+    }
+  },
+  "installation": {
+    "id": 1
+  }
+}

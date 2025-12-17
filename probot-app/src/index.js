@@ -3,6 +3,11 @@
  * Automates repository workflows and community management
  */
 
+// Configuration constants
+const STALE_ISSUE_DAYS = 30; // Days until an issue is marked as stale
+const STALE_CLOSE_DAYS = 7; // Days after stale label before closing
+const STALE_LABEL = "stale";
+
 /**
  * @param {import('probot').Probot} app
  */
@@ -18,14 +23,14 @@ module.exports = (app) => {
     const body = (issue.body || "").toLowerCase();
     const labels = [];
 
-    // Detect issue type from content
-    if (title.includes("bug") || body.includes("error") || body.includes("crash") || body.includes("not working")) {
+    // Detect issue type from content using word boundaries
+    if (/\bbug\b/.test(title) || /\berror\b/.test(body) || /\bcrash\b/.test(body) || body.includes("not working")) {
       labels.push("bug");
     }
-    if (title.includes("feature") || title.includes("request") || body.includes("would be nice") || body.includes("suggestion")) {
+    if (/\bfeature\b/.test(title) || /\brequest\b/.test(title) || body.includes("would be nice") || /\bsuggestion\b/.test(body)) {
       labels.push("enhancement");
     }
-    if (title.includes("doc") || body.includes("documentation") || body.includes("readme")) {
+    if (/\bdoc\b/.test(title) || /\bdocumentation\b/.test(body) || /\breadme\b/.test(body)) {
       labels.push("documentation");
     }
 
@@ -63,7 +68,7 @@ module.exports = (app) => {
 Thanks for opening your first issue! We appreciate your contribution to the project.
 
 A maintainer will review this soon. In the meantime:
-- 📖 Check out our [README](../blob/main/README_ENHANCED.md) for feature documentation
+- 📖 Check out our [README](https://github.com/Xaric23/DungeonCrawlerAI/blob/main/README_ENHANCED.md) for feature documentation
 - 🎮 Try the [web demo](https://xaric23.github.io/DungeonCrawlerAI/)
 - 💬 Feel free to provide any additional details that might help
 
@@ -104,12 +109,13 @@ Happy dungeon crawling! 🏰`;
 
     // Check for first-time contributor
     const creator = pr.user.login;
-    const { data: prs } = await context.octokit.pulls.list({
+    const { data: creatorIssues } = await context.octokit.issues.listForRepo({
       ...context.repo(),
       state: "all",
+      creator,
     });
 
-    const creatorPRs = prs.filter((p) => p.user.login === creator);
+    const creatorPRs = creatorIssues.filter((issue) => issue.pull_request);
     if (creatorPRs.length === 1) {
       const welcomeMessage = `🎉 Thanks for your first PR, @${creator}!
 
@@ -128,54 +134,83 @@ A maintainer will review this soon. Thanks for helping make the dungeon more dan
 
   // ============ STALE ISSUE MANAGEMENT ============
 
-  // Mark stale issues (run via scheduled workflow)
-  app.on("schedule.repository", async (context) => {
-    const daysUntilStale = 30;
-    const daysUntilClose = 7;
-    const staleLabel = "stale";
+  /**
+   * Note: This handler checks stale issues on issue activity.
+   * For scheduled checks, use GitHub Actions with a cron schedule that
+   * triggers a repository_dispatch event or use the probot-scheduler plugin.
+   */
+  app.on("issues", async (context) => {
+    // Fetch all open issues with pagination
+    const allIssues = [];
+    let page = 1;
 
-    const { data: issues } = await context.octokit.issues.listForRepo({
-      ...context.repo(),
-      state: "open",
-      per_page: 100,
-    });
+    while (true) {
+      const { data: issuesPage } = await context.octokit.issues.listForRepo({
+        ...context.repo(),
+        state: "open",
+        per_page: 100,
+        page,
+      });
+
+      allIssues.push(...issuesPage);
+
+      if (issuesPage.length < 100) {
+        break;
+      }
+
+      page += 1;
+    }
 
     const now = new Date();
 
-    for (const issue of issues) {
-      const updatedAt = new Date(issue.updated_at);
-      const daysSinceUpdate = (now - updatedAt) / (1000 * 60 * 60 * 24);
+    for (const issue of allIssues) {
+      try {
+        const updatedAt = new Date(issue.updated_at);
+        const daysSinceUpdate = (now - updatedAt) / (1000 * 60 * 60 * 24);
 
-      const isStale = issue.labels.some((l) => l.name === staleLabel);
+        const isStale = issue.labels.some((l) => l.name === STALE_LABEL);
 
-      if (daysSinceUpdate > daysUntilStale && !isStale) {
-        // Mark as stale
-        await context.octokit.issues.addLabels({
-          ...context.repo(),
-          issue_number: issue.number,
-          labels: [staleLabel],
-        });
+        if (daysSinceUpdate > STALE_ISSUE_DAYS && !isStale) {
+          // Mark as stale
+          await context.octokit.issues.addLabels({
+            ...context.repo(),
+            issue_number: issue.number,
+            labels: [STALE_LABEL],
+          });
 
-        await context.octokit.issues.createComment({
-          ...context.repo(),
-          issue_number: issue.number,
-          body: `⏰ This issue has been automatically marked as stale because it has not had activity in ${daysUntilStale} days.
+          await context.octokit.issues.createComment({
+            ...context.repo(),
+            issue_number: issue.number,
+            body: `⏰ This issue has been automatically marked as stale because it has not had activity in ${STALE_ISSUE_DAYS} days.
 
-It will be closed in ${daysUntilClose} days if no further activity occurs. If this issue is still relevant, please comment or update it.`,
-        });
-      } else if (isStale && daysSinceUpdate > daysUntilStale + daysUntilClose) {
-        // Close stale issue
-        await context.octokit.issues.update({
-          ...context.repo(),
-          issue_number: issue.number,
-          state: "closed",
-        });
+It will be closed in ${STALE_CLOSE_DAYS} days if no further activity occurs. If this issue is still relevant, please comment or update it.`,
+          });
 
-        await context.octokit.issues.createComment({
-          ...context.repo(),
-          issue_number: issue.number,
-          body: "🔒 This issue has been closed due to inactivity. Feel free to reopen if it's still relevant!",
-        });
+          // Add delay to avoid rate limiting
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } else if (isStale && daysSinceUpdate > STALE_ISSUE_DAYS + STALE_CLOSE_DAYS) {
+          // Close stale issue
+          await context.octokit.issues.update({
+            ...context.repo(),
+            issue_number: issue.number,
+            state: "closed",
+          });
+
+          await context.octokit.issues.createComment({
+            ...context.repo(),
+            issue_number: issue.number,
+            body: "🔒 This issue has been closed due to inactivity. Feel free to reopen if it's still relevant!",
+          });
+
+          // Add delay to avoid rate limiting
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      } catch (error) {
+        context.log.error(
+          { err: error, issueNumber: issue.number },
+          "Failed to process stale issue"
+        );
+        // Continue processing other issues even if one fails
       }
     }
   });
@@ -233,11 +268,12 @@ python main_enhanced.py
 
 Happy dungeon crawling! 🏰`;
 
-    // Update release body
+    // Sanitize and update release body
+    const existingBody = release.body || "";
     await context.octokit.repos.updateRelease({
       ...context.repo(),
       release_id: release.id,
-      body: release.body + additionalNotes,
+      body: existingBody + additionalNotes,
     });
   });
 };

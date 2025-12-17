@@ -13,9 +13,7 @@ default_events:
   - issues
   - issue_comment
   - pull_request
-  - pull_request_review
   - release
-  - push
 
 # Permissions needed
 default_permissions:
@@ -27,7 +25,7 @@ default_permissions:
   issues: write
   pull_requests: write
   
-# Where can this app be installed
-# single - Only on the owner's account
-# selected - On selected repositories
+# Path (within each repository) to this app's configuration file
+# Used when the app relies on a single config file per repo
+# e.g., .github/dungeoncrawler-bot.yml in the default branch
 single_file_name: .github/dungeoncrawler-bot.yml

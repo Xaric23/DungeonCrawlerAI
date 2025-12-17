@@ -1,0 +1,19 @@
+{
+  "action": "created",
+  "comment": {
+    "id": 1,
+    "body": "Thanks for the awesome work!"
+  },
+  "issue": {
+    "number": 1
+  },
+  "repository": {
+    "name": "DungeonCrawlerAI",
+    "owner": {
+      "login": "Xaric23"
+    }
+  },
+  "installation": {
+    "id": 1
+  }
+}

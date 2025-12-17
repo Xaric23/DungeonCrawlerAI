@@ -1,0 +1,18 @@
+{
+  "action": "published",
+  "release": {
+    "id": 1,
+    "tag_name": "v1.0.0",
+    "name": "Version 1.0.0",
+    "body": "Initial release with core features"
+  },
+  "repository": {
+    "name": "DungeonCrawlerAI",
+    "owner": {
+      "login": "Xaric23"
+    }
+  },
+  "installation": {
+    "id": 1
+  }
+}
