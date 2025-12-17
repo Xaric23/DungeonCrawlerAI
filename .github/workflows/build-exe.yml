@@ -55,7 +55,7 @@ jobs:
           Compress-Archive -Path release\* -DestinationPath DungeonCrawlerAI-Windows.zip
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: DungeonCrawlerAI-Windows
           path: DungeonCrawlerAI-Windows.zip
