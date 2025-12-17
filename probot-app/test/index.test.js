@@ -134,7 +134,16 @@ describe("DungeonCrawler Bot", () => {
         .post("/app/installations/1/access_tokens")
         .reply(200, { token: "test" })
         .get("/repos/Xaric23/DungeonCrawlerAI/issues?creator=testuser&state=all")
-        .reply(200, [{ ...pullRequestOpenedPayload.pull_request, pull_request: {} }])
+        .reply(200, [
+          {
+            number: 1,
+            title: pullRequestOpenedPayload.pull_request.title,
+            user: pullRequestOpenedPayload.pull_request.user,
+            pull_request: {
+              url: "https://api.github.com/repos/Xaric23/DungeonCrawlerAI/pulls/1",
+            },
+          },
+        ])
         .post("/repos/Xaric23/DungeonCrawlerAI/issues/1/labels")
         .reply(200, [])
         .post("/repos/Xaric23/DungeonCrawlerAI/issues/1/comments", (body) => {
@@ -171,7 +180,16 @@ describe("DungeonCrawler Bot", () => {
         })
         .reply(200, [])
         .get("/repos/Xaric23/DungeonCrawlerAI/issues?creator=testuser&state=all")
-        .reply(200, [{ ...bugFixPayload.pull_request, pull_request: {} }]);
+        .reply(200, [
+          {
+            number: 1,
+            title: bugFixPayload.pull_request.title,
+            user: bugFixPayload.pull_request.user,
+            pull_request: {
+              url: "https://api.github.com/repos/Xaric23/DungeonCrawlerAI/pulls/1",
+            },
+          },
+        ]);
 
       await probot.receive({ name: "pull_request.opened", payload: bugFixPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
@@ -195,7 +213,16 @@ describe("DungeonCrawler Bot", () => {
         })
         .reply(200, [])
         .get("/repos/Xaric23/DungeonCrawlerAI/issues?creator=testuser&state=all")
-        .reply(200, [{ ...enhancementPayload.pull_request, pull_request: {} }]);
+        .reply(200, [
+          {
+            number: 1,
+            title: enhancementPayload.pull_request.title,
+            user: enhancementPayload.pull_request.user,
+            pull_request: {
+              url: "https://api.github.com/repos/Xaric23/DungeonCrawlerAI/pulls/1",
+            },
+          },
+        ]);
 
       await probot.receive({ name: "pull_request.opened", payload: enhancementPayload });
       expect(mock.pendingMocks()).toStrictEqual([]);
@@ -214,7 +241,7 @@ describe("DungeonCrawler Bot", () => {
         .reply(200, {});
 
       await probot.receive({
-        name: "issue_comment",
+        name: "issue_comment.created",
         payload: issueCommentCreatedPayload,
       });
       expect(mock.pendingMocks()).toStrictEqual([]);
@@ -239,7 +266,7 @@ describe("DungeonCrawler Bot", () => {
         .reply(200, {});
 
       await probot.receive({
-        name: "issue_comment",
+        name: "issue_comment.created",
         payload: fixedPayload,
       });
       expect(mock.pendingMocks()).toStrictEqual([]);
@@ -260,7 +287,7 @@ describe("DungeonCrawler Bot", () => {
         .reply(200, {});
 
       await probot.receive({
-        name: "release",
+        name: "release.published",
         payload: releasePublishedPayload,
       });
       expect(mock.pendingMocks()).toStrictEqual([]);
@@ -285,7 +312,7 @@ describe("DungeonCrawler Bot", () => {
         .reply(200, {});
 
       await probot.receive({
-        name: "release",
+        name: "release.published",
         payload: nullBodyPayload,
       });
       expect(mock.pendingMocks()).toStrictEqual([]);
