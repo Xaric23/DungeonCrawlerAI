@@ -33,6 +33,14 @@ In traditional dungeon crawlers, you control the hero. In DungeonCrawlerAI, the 
 - Connected room structure with exploration paths
 - Special rooms: Entrance, Treasure, Boss
 
+### 🔧 Modding System
+- **JSON-Based Mods**: Create custom content with simple JSON files
+- **Custom Enemies**: Define new enemy types with custom stats
+- **Custom Items**: Add weapons, armor, potions, and treasures
+- **Custom Traps**: Create unique trap types with custom damage
+- **Easy to Use**: Just drop mod files in the `mods/` directory
+- **See [MODDING_GUIDE.md](MODDING_GUIDE.md) for full documentation**
+
 ## Installation
 
 No external dependencies required! Uses only Python standard library.
@@ -223,7 +231,48 @@ Hero Suspicion Level: 65%
 ==================================================
 ```
 
-## Extending the Game
+## Modding
+
+The game now supports a modding system! You can create custom content without modifying the source code.
+
+### Quick Start
+
+1. Create a folder in the `mods/` directory for your mod
+2. Add a `mod.json` file with your custom content
+3. Run the game - mods are loaded automatically!
+
+### Example Mod
+
+```json
+{
+  "name": "My Custom Mod",
+  "version": "1.0.0",
+  "enemies": [
+    {
+      "id": "vampire",
+      "name": "Vampire",
+      "type": "vampire",
+      "health": 70,
+      "attack": 18,
+      "defense": 6
+    }
+  ],
+  "items": [
+    {
+      "id": "legendary_sword",
+      "name": "Legendary Sword",
+      "type": "weapon",
+      "value": 30
+    }
+  ]
+}
+```
+
+See **[MODDING_GUIDE.md](MODDING_GUIDE.md)** for complete documentation on creating mods.
+
+## Extending the Game (Programmatically)
+
+For developers who want to extend the game through code:
 
 ### Add New Enemy Types
 
@@ -286,8 +335,10 @@ MIT License - Feel free to use and modify!
 ## Contributing
 
 Contributions welcome! Areas for enhancement:
+- Create and share mods in the community
 - More enemy types and behaviors
 - Additional curse powers
+- Enhanced modding features (custom curse powers, custom events)
 - Save/load game state
 - Visualization (pygame, matplotlib)
 - Multiplayer (multiple heroes or curses)

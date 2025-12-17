@@ -6,6 +6,24 @@ Demonstrates the game simulation with different configurations.
 import sys
 from game import DungeonCrawlerGame
 
+# Load mods at startup
+try:
+    from mod_loader import load_mods, get_mod_registry
+    print("Loading mods...")
+    registry = load_mods(verbose=True)
+    if registry.loaded_mods:
+        print(f"✓ Loaded {len(registry.loaded_mods)} mod(s): {', '.join(registry.loaded_mods)}")
+        print(f"  - {len(registry.enemies)} custom enemies")
+        print(f"  - {len(registry.items)} custom items")
+        print(f"  - {len(registry.traps)} custom traps")
+        print(f"  - {len(registry.curse_powers)} custom curse powers")
+    else:
+        print("No mods found. Using vanilla content only.")
+    print()
+except ImportError:
+    print("Mod system not available.")
+    print()
+
 
 def run_basic_simulation():
     """Run a basic simulation without player interference"""
