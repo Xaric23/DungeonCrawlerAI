@@ -47,6 +47,7 @@ class DungeonCrawlerGame:
         # Subscribe to important events
         self.event_bus.subscribe(EventType.HERO_DIED, self._on_hero_died)
         self.event_bus.subscribe(EventType.ROOM_ENTERED, self._on_room_entered)
+        self.event_bus.subscribe(EventType.ENEMY_DIED, self._on_enemy_died)
         
         # Event log for display
         self.event_log = []
@@ -61,6 +62,15 @@ class DungeonCrawlerGame:
     def _on_room_entered(self, event: Event):
         """Track room entries"""
         room_id = event.data.get("room")
+        self._check_boss_victory(room_id)
+    
+    def _on_enemy_died(self, event: Event):
+        """Check victory condition when enemy dies"""
+        room_id = event.data.get("room")
+        self._check_boss_victory(room_id)
+    
+    def _check_boss_victory(self, room_id):
+        """Check if boss room has been cleared"""
         room = self.dungeon.get_room(room_id)
         
         # Check if hero reached boss room and cleared it
@@ -82,14 +92,14 @@ class DungeonCrawlerGame:
         if self.state.game_over:
             return False
         
-        self.state.turn += 1
-        
-        # Check turn limit
-        if self.state.turn > self.max_turns:
+        # Check turn limit before incrementing
+        if self.state.turn >= self.max_turns:
             self.state.game_over = True
             self.state.reason = "Turn limit reached"
             self.log("=== GAME OVER: Turn limit reached ===")
             return False
+        
+        self.state.turn += 1
         
         # Hero AI takes action
         status = self.hero_ai.tick()
@@ -199,6 +209,20 @@ class DungeonCrawlerGame:
             print(f"Hero Suspicion Level: {self.hero.suspicion_level}%")
             print(f"=" * 50)
         
+        return {
+            "turns": self.state.turn,
+            "victory": self.state.victory,
+            "hero_alive": self.hero.is_alive,
+            "hero_health": self.hero.health,
+            "hero_suspicion": self.hero.suspicion_level,
+            "player_actions": self.player_curse.actions_taken if self.player_curse else 0,
+            "rooms_visited": len(self.hero.visited_rooms),
+            "gold_collected": self.hero.gold,
+            "reason": self.state.reason
+        }
+    
+    def get_results(self) -> dict:
+        """Get current game results without running simulation"""
         return {
             "turns": self.state.turn,
             "victory": self.state.victory,

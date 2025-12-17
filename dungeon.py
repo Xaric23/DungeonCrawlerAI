@@ -4,13 +4,15 @@ Creates interconnected rooms with items, enemies, and traps.
 """
 import random
 from typing import List, Optional, Dict
-from models import Room, RoomType, Item, ItemType, ItemQuality, Enemy, EnemyType, Trap, TrapType
+from models import Room, RoomType, Item, ItemType, Enemy, EnemyType, Trap, TrapType
 
 
 class Dungeon:
     """Represents the dungeon structure"""
     
     def __init__(self, num_rooms: int = 10):
+        if num_rooms < 3:
+            raise ValueError(f"Dungeon requires at least 3 rooms (entrance, treasure, boss), got {num_rooms}")
         self.rooms: Dict[int, Room] = {}
         self.num_rooms = num_rooms
         self.entrance_room_id = 0

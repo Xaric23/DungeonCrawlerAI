@@ -3,12 +3,12 @@ Hero AI using behavior trees.
 The hero autonomously explores, fights, and loots while adapting to player interference.
 """
 import random
-from typing import Optional, List
+from typing import Optional
 from behavior_tree import (
     BehaviorTree, NodeStatus, SequenceNode, SelectorNode,
-    ConditionNode, ActionNode, BehaviorNode
+    ConditionNode, ActionNode
 )
-from models import Hero, Room, Enemy, Item, ItemType, ItemQuality
+from models import Hero, Room, Enemy, ItemQuality
 from dungeon import Dungeon
 from events import EventBus, Event, EventType
 

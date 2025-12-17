@@ -2,11 +2,9 @@
 Player Curse system.
 The player controls the dungeon as a "curse" and can interfere with the hero's journey.
 """
-from typing import Optional
-from models import Room, Enemy, Item, Trap, TrapType, Hero
+from models import Trap, TrapType, Hero
 from dungeon import Dungeon
 from events import EventBus, Event, EventType
-import random
 
 
 class PlayerCurse:
@@ -224,10 +222,13 @@ class PlayerCurse:
                         room_actions.append(f"corrupt_item_{i}")
             
             # Enemies that can be mutated
-            if target_room.get_alive_enemies():
-                for i, enemy in enumerate(target_room.get_alive_enemies()):
+            alive_enemies = target_room.get_alive_enemies()
+            if alive_enemies:
+                for enemy in alive_enemies:
+                    # Find the original index in the full enemy list
+                    original_idx = target_room.enemies.index(enemy)
                     if not enemy.is_mutated and self.curse_energy >= 25:
-                        room_actions.append(f"mutate_enemy_{i}")
+                        room_actions.append(f"mutate_enemy_{original_idx}")
             
             # Can spawn traps
             if self.curse_energy >= 15:

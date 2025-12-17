@@ -25,7 +25,7 @@ A complete implementation of a reverse dungeon crawler where the player does NOT
 ### 3. Event-Driven Architecture ✓
 - **EventBus System**: Decoupled communication between components
 - **Event History**: Full tracking and replay capability
-- **16 Event Types**: Comprehensive coverage of game actions
+- **21 Event Types**: Comprehensive coverage of game actions (6 hero + 4 enemy + 3 room + 2 trap + 2 item + 2 player + 2 game)
 
 ### 4. Procedural Dungeon Generation ✓
 - **Connected Rooms**: Linear path with branches

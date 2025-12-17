@@ -4,7 +4,6 @@ Example use cases for DungeonCrawlerAI.
 Demonstrates various features and configurations.
 """
 from game import DungeonCrawlerGame
-from models import TrapType
 import random
 
 
@@ -82,7 +81,7 @@ def example_strategic_interference():
         if turn_count % 15 == 0:
             print(f"Turn {turn_count}: Hero HP={game.hero.health}, Suspicion={game.hero.suspicion_level}%")
     
-    results = game.run_simulation(max_turns=0, verbose=False)  # Just get final results
+    results = game.get_results()  # Just get final results
     
     print("\n--- Final Statistics ---")
     print(f"Outcome: {'VICTORY' if results['victory'] else 'DEFEAT'}")

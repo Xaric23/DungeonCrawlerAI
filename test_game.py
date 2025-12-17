@@ -11,10 +11,10 @@ from models import (
 from dungeon import Dungeon
 from events import EventBus, Event, EventType
 from behavior_tree import (
-    BehaviorTree, NodeStatus, SequenceNode, SelectorNode,
+    NodeStatus, SequenceNode, SelectorNode,
     ConditionNode, ActionNode, InverterNode
 )
-from hero_ai import HeroAI, HeroAIContext
+from hero_ai import HeroAI
 from player_curse import PlayerCurse
 from game import DungeonCrawlerGame
 
@@ -388,7 +388,7 @@ class TestGame(unittest.TestCase):
         self.assertIn("turns", results)
         self.assertIn("victory", results)
         self.assertIn("hero_alive", results)
-        self.assertLessEqual(results["turns"], 51)  # Can be 1 over limit
+        self.assertLessEqual(results["turns"], 50)
 
 
 def run_tests():

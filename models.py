@@ -3,7 +3,7 @@ Core data models for DungeonCrawlerAI.
 Defines the basic entities: Items, Enemies, Rooms, and Hero.
 """
 from enum import Enum
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 import random
 
 
@@ -193,6 +193,8 @@ class Hero:
     
     def heal(self, amount: int):
         """Heal the hero"""
+        if amount < 0:
+            raise ValueError("Heal amount must be non-negative. Use take_damage for negative effects.")
         self.health = min(self.max_health, self.health + amount)
     
     def add_item(self, item: Item):
@@ -205,10 +207,10 @@ class Hero:
             self.defense += item.value
         elif item.item_type == ItemType.TREASURE:
             self.gold += item.value
-        
-        # Negative effects from corrupted/cursed items
-        if item.quality == ItemQuality.CURSED:
-            self.health = max(1, self.health + item.value)  # item.value is negative
+        elif item.item_type == ItemType.HEALTH_POTION:
+            # Apply health effects from potions (including cursed ones)
+            if item.quality == ItemQuality.CURSED:
+                self.health = max(1, self.health + item.value)  # item.value is negative
     
     def use_health_potion(self) -> bool:
         """Use a health potion from inventory"""

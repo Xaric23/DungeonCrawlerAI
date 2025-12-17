@@ -83,7 +83,7 @@ def run_interactive_demo():
             break
     
     print("\n=== Interactive Demo Complete ===")
-    return game.run_simulation(max_turns=0, verbose=True)  # Just get results
+    return game.get_results()  # Just get results
 
 
 def main():
